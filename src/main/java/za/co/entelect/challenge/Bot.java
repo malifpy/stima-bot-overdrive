@@ -3,6 +3,7 @@ package za.co.entelect.challenge;
 import za.co.entelect.challenge.command.*;
 import za.co.entelect.challenge.entities.*;
 import za.co.entelect.challenge.enums.Terrain;
+import za.co.entelect.challenge.enums.PowerUps;
 
 import java.util.*;
 
