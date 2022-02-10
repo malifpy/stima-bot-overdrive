@@ -23,6 +23,8 @@ public class Bot {
     private final static Command BOOST = new BoostCommand();
     private final static Command EMP = new EmpCommand();
     private final static Command LIZARD = new LizardCommand();
+    private final static Command TURN_RIGHT = new ChangeLaneCommand(1);
+    private final static Command TURN_LEFT = new ChangeLaneCommand(-1);
 
     public Bot(Random random, GameState gameState) {
         this.random = random;
@@ -35,36 +37,138 @@ public class Bot {
     }
 
     public Command run() {
-        List<Object> blocks = getBlocksInFront(myCar.position.lane, myCar.position.block);
-        if (myCar.damage > 0) {
+        List<Object> blocksInFront = getBlocksIn("front", myCar.position.lane, myCar.position.block);
+        int potentialDamageFront = getPotentialDamage(blocksInFront);
+        int potentialPowerUpsFront = getPotentialPowerUps(blocksInFront);
+        if (myCar.damage > 1) {
             return new FixCommand();
         }
-        if (blocks.contains(Terrain.MUD)) {
-            int i = random.nextInt(directionList.size());
-            return new ChangeLaneCommand(directionList.get(i));
+        if(myCar.position.lane == 2 | myCar.position.lane == 3) {
+            List<Object> blocksInRight = getBlocksIn("right", myCar.position.lane, myCar.position.block);
+            List<Object> blocksInLeft = getBlocksIn("left", myCar.position.lane, myCar.position.block);
+            int potentialDamageRight = getPotentialDamage(blocksInRight);
+            int potentialDamageLeft = getPotentialDamage(blocksInLeft);
+            int potentialPowerUpsRight = getPotentialPowerUps(blocksInRight);
+            int potentialPowerUpsLeft = getPotentialPowerUps(blocksInLeft);
+
+            if(potentialDamageRight < potentialDamageLeft && potentialDamageRight < potentialDamageFront) {
+                return TURN_RIGHT;
+            }
+            if(potentialDamageLeft < potentialDamageRight && potentialDamageLeft < potentialDamageFront) {
+                return TURN_LEFT;
+            } // damage lurus paling kecil, atau ada yang sama dan lurus bisa besar
+            if(potentialDamageFront == potentialDamageLeft) {
+                if(potentialPowerUpsLeft > potentialPowerUpsFront) {
+                    return TURN_LEFT;
+                } // tetap lurus
+            }
+            if(potentialDamageFront == potentialDamageRight) {
+                if(potentialPowerUpsRight > potentialPowerUpsFront) {
+                    return TURN_RIGHT;
+                } // tetap lurus
+            }
+            if(potentialDamageLeft == potentialDamageRight && potentialDamageRight != 0 && potentialDamageFront > 0) {
+                if(potentialPowerUpsRight < potentialPowerUpsLeft) {
+                    return TURN_LEFT;
+                }
+                if(potentialPowerUpsRight > potentialPowerUpsLeft) {
+                    return TURN_RIGHT;
+                }
+                // left == right
+            }
+            if(potentialDamageFront > 0) {
+                int i = random.nextInt(directionList.size());
+                return new ChangeLaneCommand(directionList.get(i));
+            }
+            // bisa front lebih kecil
+
+//            if (blocksInFront.contains(Terrain.MUD) | blocksInFront.contains(Terrain.WALL)) {
+//                if (blocksInRight.contains(Terrain.MUD) | blocksInRight.contains(Terrain.WALL)) {
+//                    if (blocksInLeft.contains(Terrain.MUD) | blocksInLeft.contains(Terrain.WALL)) {
+//                        return new AccelerateCommand();
+//                    }
+//                    return new ChangeLaneCommand(directionList.get(0));
+//                }
+//                return new ChangeLaneCommand(directionList.get(1));
+//            }
         }
-        if (blocks.contains(Terrain.OIL_SPILL)) {
-            int i = random.nextInt(directionList.size());
-            return new ChangeLaneCommand(directionList.get(i));
+        if(myCar.position.lane == 1) {
+            List<Object> blocksInRight = getBlocksIn("right", myCar.position.lane, myCar.position.block);
+            int potentialDamageRight = getPotentialDamage(blocksInRight);
+            int potentialPowerUpsRight = getPotentialPowerUps(blocksInRight);
+            if(potentialDamageFront > potentialDamageRight) {
+                return TURN_RIGHT;
+            } // damageRight <= damageFront
+            if(potentialDamageFront == potentialDamageRight) {
+                if(potentialPowerUpsRight > potentialPowerUpsFront) {
+                    return TURN_RIGHT;
+                } // potensialFront >= potensialRight
+            }
         }
-        if (blocks.contains(Terrain.WALL)) {
-            int i = random.nextInt(directionList.size());
-            return new ChangeLaneCommand(directionList.get(i));
+        if(myCar.position.lane == 4) {
+            List<Object> blocksInLeft = getBlocksIn("left", myCar.position.lane, myCar.position.block);
+            int potentialDamageLeft = getPotentialDamage(blocksInLeft);
+            int potentialPowerUpsLeft = getPotentialPowerUps(blocksInLeft);
+            if(potentialDamageFront > potentialDamageLeft) {
+                return TURN_LEFT;
+            } // damageLeft <= damageFront
+            if(potentialDamageFront == potentialDamageLeft) {
+                if(potentialPowerUpsLeft > potentialPowerUpsFront) {
+                    return TURN_LEFT;
+                } // potensialFront >= potensialLeft
+            }
+        }
+        if(isInFront() & hasPowerUp(PowerUps.OIL)) {
+            return OIL;
+        }
+        if(!isInFront() & hasPowerUp(PowerUps.EMP)) {
+            return EMP;
         }
         return new AccelerateCommand();
     }
 
     /**
+     * mengembalikan true apabila memiliki power up yang diinginkan
+     */
+    private Boolean hasPowerUp(PowerUps powerUpToCheck) {
+        for(PowerUps powerUp : myCar.powerups) {
+            if(powerUp.equals(powerUpToCheck)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    /**
+     * Mengembalikan true apabila mobil berada di depan musuh
+     */
+    private Boolean isInFront() {
+        return myCar.position.block > opponent.position.block;
+    }
+
+    /**
      * Returns map of blocks and the objects in the for the current lanes, returns the amount of blocks that can be
-     * traversed at max speed.
+     * traversed at car speed.
      **/
-    private List<Object> getBlocksInFront(int lane, int block) {
+    private List<Object> getBlocksIn(String position, int lane, int block) {
         List<Lane[]> map = gameState.lanes;
         List<Object> blocks = new ArrayList<>();
         int startBlock = map.get(0)[0].position.block;
-
+        // untuk di depan dari posisi mobil, block di mana mobil berada tidak
+        // ikut diperhitungkan
+        int lowerBound = max(block + 1 - startBlock, 0);
+        int upperBound = block - startBlock + myCar.speed;
+        if(position == "right") {
+            lane += 1;
+            lowerBound = max(block - startBlock, 0);
+            upperBound = block - startBlock + myCar.speed - 1;
+        } else if(position == "left") {
+            lane -= 1;
+            lowerBound = max(block - startBlock, 0);
+            upperBound = block - startBlock + myCar.speed - 1;
+        }
         Lane[] laneList = map.get(lane - 1);
-        for (int i = max(block - startBlock, 0); i <= block - startBlock + Bot.maxSpeed; i++) {
+        for (int i = lowerBound; i <= upperBound; i++) {
             if (laneList[i] == null || laneList[i].terrain == Terrain.FINISH) {
                 break;
             }
@@ -75,4 +179,63 @@ public class Bot {
         return blocks;
     }
 
+    /**
+     * mengembalikan jumlah potensial damage yang diterima di suatu lane
+     * exclude cybertruck
+     * @param listTerrain
+     * @return
+     */
+    private int getPotentialDamage(List<Object> listTerrain) {
+        int damage = 0;
+        for (int i = 0; i < listTerrain.size(); i++) {
+            if(listTerrain.get(i) == Terrain.MUD | listTerrain.get(i) == Terrain.OIL_SPILL) {
+                damage += 1;
+            } else if(listTerrain.get(i) == Terrain.WALL) {
+                damage += 2;
+            }
+        }
+        return damage;
+    }
+
+    private int getPotentialPowerUps(List<Object> listTerrain) {
+        int countPowerUp = 0;
+        for (int i = 0; i < listTerrain.size(); i++) {
+            if(listTerrain.get(i) == Terrain.OIL_POWER | listTerrain.get(i) == Terrain.BOOST | listTerrain.get(i) == Terrain.LIZARD | listTerrain.get(i) == Terrain.EMP | listTerrain.get(i) == Terrain.TWEET) {
+                countPowerUp++;
+            }
+        }
+        return countPowerUp;
+    }
 }
+
+/*
+
+
+0. kalau ada di lane 3 atau lane 4, periksa apakah di lane 4 ada cybertruck.
+    kalau ada harus dihindari
+
+1. cek jumlah damage obstacle tiap lane yang mungkin berdasarkan jenis obstacle. jangan
+periksa Block yang ditempati mobil karena sudah tidak berlaku lagi. Jadi mulai hitung block di depan mobil apabila lurus.
+Mud: 1
+Oil: 1
+Wall: 2
+Cybertruck: 2
+
+2. pilih lane yang paling dikit damagenya. Belok jika damage besar apabila lurus.
+{ kenapa gak cari lane yang ada power upnya? karena apabila bisa ambil power up tapi
+kena damage, max speed akan berkurang yang membuat mobil tidak bisa menggunakan power up scr optimal }
+
+4. apabila jumlahnya sama semua, pilih yang wallnya dikit, sama? pilih mud dikit.
+
+3. apabila ada dua lane yang damagenya sama dengan syarat lebih kecil dari lane yang satunya,
+    maka pilih jalur yang punya banyak power up (diperksa dulu).
+
+4. apabila jumlah power up sama, ambil jalur lurus (karena speed tidak dikurangi)
+
+5. apabila tetap ambil jalan lurus, gunakan power up dengan ketentuan
+- gunain emp (posisi di belakang) -> mengurangi speed musuh 3
+- gunain tweet 4 76 (posisi di belakang) -> ngasih cyberstruk (damage 2)
+- ambil oil (posisi di depan) -> damage 1
+
+6.
+ */
