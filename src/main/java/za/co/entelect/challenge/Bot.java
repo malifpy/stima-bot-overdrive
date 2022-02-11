@@ -123,9 +123,9 @@ public class Bot {
         if(hasPowerUp(PowerUps.OIL) && isInFront()) {
             return OIL;
         }
-        if(hasPowerUp(PowerUps.TWEET) && !isInFront() && isTweetable()) {
-            return TWEET;
-        }
+//        if(hasPowerUp(PowerUps.TWEET) && !isInFront() && isTweetable()) {
+//            return TWEET;
+//        }
         if(hasPowerUp(PowerUps.BOOST) && myCar.damage != 0) {
             return FIX;
         }
