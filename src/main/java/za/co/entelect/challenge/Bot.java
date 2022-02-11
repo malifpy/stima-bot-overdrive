@@ -78,6 +78,12 @@ public class Bot {
                 // left == right
             }
             if(potentialDamageFront > 0) {
+                if(potentialDamageLeft == 0) {
+                    return TURN_LEFT;
+                }
+                if(potentialDamageRight == 0) {
+                    return TURN_RIGHT;
+                }
                 if(hasPowerUp(PowerUps.LIZARD)) {
                     return LIZARD;
                 }
