@@ -23,6 +23,7 @@ public class Bot {
     private final static Command BOOST = new BoostCommand();
     private final static Command EMP = new EmpCommand();
     private final static Command LIZARD = new LizardCommand();
+    private final static Command TWEET = new TweetCommand();
     private final static Command TURN_RIGHT = new ChangeLaneCommand(1);
     private final static Command TURN_LEFT = new ChangeLaneCommand(-1);
 
@@ -41,7 +42,7 @@ public class Bot {
         int potentialDamageFront = getPotentialDamage(blocksInFront);
         int potentialPowerUpsFront = getPotentialPowerUps(blocksInFront);
         if (myCar.damage > 1) {
-            return new FixCommand();
+            return FIX;
         }
         if(myCar.position.lane == 2 | myCar.position.lane == 3) {
             List<Object> blocksInRight = getBlocksIn("right", myCar.position.lane, myCar.position.block);
@@ -77,20 +78,12 @@ public class Bot {
                 // left == right
             }
             if(potentialDamageFront > 0) {
+                if(hasPowerUp(PowerUps.LIZARD)) {
+                    return LIZARD;
+                }
                 int i = random.nextInt(directionList.size());
                 return new ChangeLaneCommand(directionList.get(i));
             }
-            // bisa front lebih kecil
-
-//            if (blocksInFront.contains(Terrain.MUD) | blocksInFront.contains(Terrain.WALL)) {
-//                if (blocksInRight.contains(Terrain.MUD) | blocksInRight.contains(Terrain.WALL)) {
-//                    if (blocksInLeft.contains(Terrain.MUD) | blocksInLeft.contains(Terrain.WALL)) {
-//                        return new AccelerateCommand();
-//                    }
-//                    return new ChangeLaneCommand(directionList.get(0));
-//                }
-//                return new ChangeLaneCommand(directionList.get(1));
-//            }
         }
         if(myCar.position.lane == 1) {
             List<Object> blocksInRight = getBlocksIn("right", myCar.position.lane, myCar.position.block);
@@ -118,11 +111,20 @@ public class Bot {
                 } // potensialFront >= potensialLeft
             }
         }
-        if(isInFront() & hasPowerUp(PowerUps.OIL)) {
+        if(hasPowerUp(PowerUps.EMP) && !isInFront() && isInSameLane() && isReachable()) {
+            return EMP;
+        }
+        if(hasPowerUp(PowerUps.OIL) && isInFront()) {
             return OIL;
         }
-        if(!isInFront() & hasPowerUp(PowerUps.EMP)) {
-            return EMP;
+        if(hasPowerUp(PowerUps.TWEET) && !isInFront() && isTweetable()) {
+            return TWEET;
+        }
+        if(hasPowerUp(PowerUps.BOOST) && myCar.damage != 0) {
+            return FIX;
+        }
+        if(hasPowerUp(PowerUps.BOOST)) {
+            return BOOST;
         }
         return new AccelerateCommand();
     }
@@ -144,6 +146,29 @@ public class Bot {
      */
     private Boolean isInFront() {
         return myCar.position.block > opponent.position.block;
+    }
+
+    /**
+     * Mengembalikan true apbila mobil berada di lane yang sama
+     */
+    private Boolean isInSameLane() {
+        return myCar.position.lane == opponent.position.lane;
+    }
+
+    /**
+     * Mengembalikan true apabila mobil musuh berada di jangkauan emp
+     * @return
+     */
+    private Boolean isReachable() {
+        return myCar.position.block + 15 >= opponent.position.block;
+    }
+
+    /**
+     * Mengembalikan true apabila mobil berada di block + speednya kurang dari blok ke 76
+     * @return
+     */
+    private Boolean isTweetable() {
+        return myCar.position.block + 76 >= opponent.position.block + opponent.speed;
     }
 
     /**
@@ -233,7 +258,7 @@ kena damage, max speed akan berkurang yang membuat mobil tidak bisa menggunakan 
 4. apabila jumlah power up sama, ambil jalur lurus (karena speed tidak dikurangi)
 
 5. apabila tetap ambil jalan lurus, gunakan power up dengan ketentuan
-- gunain emp (posisi di belakang) -> mengurangi speed musuh 3
+- gunain emp (posisi di belakang) -> membuat speed musuh jadi 3
 - gunain tweet 4 76 (posisi di belakang) -> ngasih cyberstruk (damage 2)
 - ambil oil (posisi di depan) -> damage 1
 
