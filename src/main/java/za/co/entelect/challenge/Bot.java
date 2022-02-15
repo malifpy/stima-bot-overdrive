@@ -9,7 +9,6 @@ import java.util.*;
 
 import static java.lang.Math.max;
 
-
 public class Bot {
 
     private List<Command> directionList = new ArrayList<>();
@@ -21,7 +20,6 @@ public class Bot {
             Terrain.TWEET);
     private static Boolean debugLog = false;
     private static Integer debugDepth = 0;
-
 
     private final static Command ACCELERATE = new AccelerateCommand();
     private final static Command LIZARD = new LizardCommand();
@@ -50,7 +48,7 @@ public class Bot {
         directionList.add(TURN_RIGHT);
     }
 
-    public Bot(Boolean debug){
+    public Bot(Boolean debug) {
         directionList.add(TURN_LEFT);
         directionList.add(TURN_RIGHT);
         debugLog = debug;
@@ -65,8 +63,10 @@ public class Bot {
             return FIX;
         } else {
             laneRating optimalLane = maxScoreLaneRating(pathsProcessed);
-            if (optimalLane.laneType.equals("MIDDLE")) {
+            if (optimalLane.laneType.equals("MIDDLE") && myCar.damage == 0) {
                 return usePowerUpOr(Arrays.asList(myCar.powerups), ACCELERATE);
+            } else if (optimalLane.laneType.equals("MIDDLE")) {
+                return usePowerUpOr(Arrays.asList(myCar.powerups), FIX);
             } else if (optimalLane.laneType.equals("LEFT")) {
                 return TURN_LEFT;
             } else {
@@ -75,8 +75,8 @@ public class Bot {
         }
     }
 
-    private static void debugMessage(String text, int addDepth){
-        if(debugLog){
+    private static void debugMessage(String text, int addDepth) {
+        if (debugLog) {
             System.out.println("[%d] %s".formatted(debugDepth, text));
             debugDepth += addDepth;
         }
@@ -186,12 +186,12 @@ public class Bot {
     }
 
     // private Boolean hasPowerUp(PowerUps powerUpToCheck, PowerUps[] available) {
-    //     for (PowerUps powerUp : available) {
-    //         if (powerUp.equals(powerUpToCheck)) {
-    //             return true;
-    //         }
-    //     }
-    //     return false;
+    // for (PowerUps powerUp : available) {
+    // if (powerUp.equals(powerUpToCheck)) {
+    // return true;
+    // }
+    // }
+    // return false;
     // }
 
     private static List<Object> getBlocks(Car myCar, List<Lane[]> map, int k) {
@@ -209,7 +209,7 @@ public class Bot {
         int startBlock = map.get(0)[0].position.block; // Getting the first block
 
         int getLane = lane - 1 + k;
-        if (getLane >= 0) {
+        if (getLane >= 0 && getLane < 4) {
             Lane[] laneList = map.get(lane - 1 + k);
             for (int i = max(block - startBlock, 0); i <= block - startBlock + myCar.speed - Math.abs(k); i++) {
                 if (laneList[i] == null || laneList[i].terrain == Terrain.FINISH) {

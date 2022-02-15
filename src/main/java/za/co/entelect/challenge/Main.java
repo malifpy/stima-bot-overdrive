@@ -24,7 +24,7 @@ public class Main {
 
         Scanner sc = new Scanner(System.in);
         Gson gson = new Gson();
-        Bot bot = new Bot(true);
+        Bot bot = new Bot();
 
         while (true) {
             try {

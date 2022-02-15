@@ -1,23 +1,3 @@
-# Bot OverDrive 
+# Bot OverDrive - Score Maximizer
 
-Dibuat untuk memenuhi Tugas Besar 1 IF2XXX Strategi Algoritma
-
-## Build
-
-### Linux
-
-Build menggunakan [Maven](https://maven.apache.org/).
-
-```bash
-mvn package
-```
-
-Bot ada di `target/`.
-
-## Anggota
-
-| Nama | NIM |
-| ---- | -------- |
-| Fitrah Ramadhani Nugroho | 13520030 |
-| Tri Sulton Adila | 13520033 |
-| Muhammad Alif Putra Yasa | 13520135 |
+Bot menggunakan *greedy algorithm* yang mengoptimalkan *Score*. Bot bekerja dengan melihat kiri/depan/kanan dan menghitung pendapatan *Score* dan *Damage*. Bot memutuskan langkah berdasarkan perhitungan tersebut.
