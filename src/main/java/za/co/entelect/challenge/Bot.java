@@ -6,7 +6,6 @@ import za.co.entelect.challenge.enums.Terrain;
 import za.co.entelect.challenge.enums.PowerUps;
 
 import java.util.*;
-
 import static java.lang.Math.max;
 
 public class Bot {
@@ -28,10 +27,10 @@ public class Bot {
         this.myCar = gameState.player;
         this.opponent = gameState.opponent;
 
+
         directionList.add(-1);
         directionList.add(1);
     }
-
     public Command run() {
         List<Object> blocks = getBlocksInFront(myCar.position.lane, myCar.position.block,"mid");
         for (PowerUps powerUp: myCar.powerups) {
@@ -58,11 +57,11 @@ public class Bot {
         if(myCar.speed == 0){
             return new AccelerateCommand();
         }
-        if (blocks.contains(Terrain.MUD) | blocks.contains(Terrain.OIL_SPILL) | blocks.contains(Terrain.WALL) ) {
+        if (blocks.contains(Terrain.MUD) | blocks.contains(Terrain.OIL_SPILL) | blocks.contains(Terrain.WALL) | blocks.contains("Cybertruck")) {
 
             if(myCar.position.lane==1){
                 List<Object> blocksRight = getBlocksInFront((myCar.position.lane)+1, myCar.position.block,"right");
-                if(blocksRight.contains(Terrain.MUD) | blocksRight.contains(Terrain.OIL_SPILL) | blocksRight.contains(Terrain.WALL) & lizard ){
+                if(blocksRight.contains(Terrain.MUD) | blocksRight.contains(Terrain.OIL_SPILL) | blocksRight.contains(Terrain.WALL) | blocksRight.contains("Cybertruck")& lizard ){
                     return new LizardCommand();
                 }
                 return new ChangeLaneCommand(directionList.get(1));
@@ -70,7 +69,7 @@ public class Bot {
             else if(myCar.position.lane==4){
 
                 List<Object> blocksLeft = getBlocksInFront((myCar.position.lane)-1, myCar.position.block,"left");
-                if(blocksLeft.contains(Terrain.MUD) | blocksLeft.contains(Terrain.OIL_SPILL) | blocksLeft.contains(Terrain.WALL)  & lizard ){
+                if(blocksLeft.contains(Terrain.MUD) | blocksLeft.contains(Terrain.OIL_SPILL) | blocksLeft.contains(Terrain.WALL) | blocksLeft.contains("Cybertruck") & lizard ){
                     return new LizardCommand();
                 }
                 return new ChangeLaneCommand(directionList.get(0));
@@ -78,16 +77,16 @@ public class Bot {
             else {
                 List<Object> blocksLeft = getBlocksInFront((myCar.position.lane)-1, myCar.position.block,"left");
                 List<Object> blocksRight = getBlocksInFront((myCar.position.lane)+1, myCar.position.block,"right");
-                if(blocksLeft.contains(Terrain.MUD) | blocksLeft.contains(Terrain.OIL_SPILL) | blocksLeft.contains(Terrain.WALL) & !(blocksRight.contains(Terrain.MUD) | blocksRight.contains(Terrain.OIL_SPILL) | blocksRight.contains(Terrain.WALL)) ){
+                if(blocksLeft.contains(Terrain.MUD) | blocksLeft.contains(Terrain.OIL_SPILL) | blocksLeft.contains(Terrain.WALL) | blocksLeft.contains("Cybertruck")& !(blocksRight.contains(Terrain.MUD) | blocksRight.contains(Terrain.OIL_SPILL) | blocksRight.contains(Terrain.WALL) | blocksRight.contains("Cybertruck")) ){
                     return new ChangeLaneCommand(directionList.get(1));
                 }
-                if(blocksRight.contains(Terrain.MUD) | blocksRight.contains(Terrain.OIL_SPILL) | blocksRight.contains(Terrain.WALL) & !(blocksLeft.contains(Terrain.MUD) | blocksLeft.contains(Terrain.OIL_SPILL) | blocksLeft.contains(Terrain.WALL))){
+                if(blocksRight.contains(Terrain.MUD) | blocksRight.contains(Terrain.OIL_SPILL) | blocksRight.contains(Terrain.WALL) | blocksRight.contains("Cybertruck")& !(blocksLeft.contains(Terrain.MUD) | blocksLeft.contains(Terrain.OIL_SPILL) | blocksLeft.contains(Terrain.WALL)| blocksLeft.contains("Cybertruck"))){
                     return new ChangeLaneCommand(directionList.get(0));
                 }
-                if(blocksLeft.contains(Terrain.MUD) | blocksLeft.contains(Terrain.OIL_SPILL) | blocksLeft.contains(Terrain.WALL) & blocksRight.contains(Terrain.MUD) | blocksRight.contains(Terrain.OIL_SPILL) | blocksRight.contains(Terrain.WALL) & lizard ){
+                if(blocksLeft.contains(Terrain.MUD) | blocksLeft.contains(Terrain.OIL_SPILL) | blocksLeft.contains(Terrain.WALL)| blocksLeft.contains("Cybertruck") & blocksRight.contains(Terrain.MUD) | blocksRight.contains(Terrain.OIL_SPILL) | blocksRight.contains(Terrain.WALL) | blocksRight.contains("Cybertruck") & lizard ){
                     return new LizardCommand();
                 }
-                if(blocksLeft.contains(Terrain.MUD) | blocksLeft.contains(Terrain.OIL_SPILL) | blocksLeft.contains(Terrain.WALL) & blocksRight.contains(Terrain.MUD) | blocksRight.contains(Terrain.OIL_SPILL) | blocksRight.contains(Terrain.WALL)){
+                if(blocksLeft.contains(Terrain.MUD) | blocksLeft.contains(Terrain.OIL_SPILL) | blocksLeft.contains(Terrain.WALL) | blocksLeft.contains("Cybertruck")& blocksRight.contains(Terrain.MUD) | blocksRight.contains(Terrain.OIL_SPILL) | blocksRight.contains(Terrain.WALL)|blocksRight.contains("Cybertruck")){
                     int obsLeft = hitungObstacle((myCar.position.lane)-1,myCar.position.block,"left");
                     int obsRight = hitungObstacle((myCar.position.lane)+1,myCar.position.block,"right");
                     int obsNow = hitungObstacle((myCar.position.lane),myCar.position.block,"mid");
@@ -134,6 +133,7 @@ public class Bot {
         }
         return true;
     }
+
     private List<Object> getBlocksInFront(int lane, int block, String dirr) {
         List<Lane[]> map = gameState.lanes;
         List<Object> blocks = new ArrayList<>();
@@ -151,8 +151,12 @@ public class Bot {
             if (laneList[i] == null || laneList[i].terrain == Terrain.FINISH) {
                 break;
             }
-
-            blocks.add(laneList[i].terrain);
+            if(laneList[i].isOccupiedByCyberTruck){
+                blocks.add("Cybertruck");
+            }
+            else {
+                blocks.add(laneList[i].terrain);
+            }
 
         }
         return blocks;
@@ -172,7 +176,7 @@ public class Bot {
             start = start+1;
         }
         for (int i = start; i <= end; i++){
-            if(laneList[i].terrain  == Terrain.MUD | laneList[i].terrain  == Terrain.WALL | laneList[i].terrain == Terrain.OIL_SPILL){
+            if(laneList[i].terrain  == Terrain.MUD | laneList[i].terrain  == Terrain.WALL | laneList[i].terrain == Terrain.OIL_SPILL | laneList[i].isOccupiedByCyberTruck){
                 jumlah++;
             }
         }
