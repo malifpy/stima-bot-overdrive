@@ -51,8 +51,11 @@ public class Bot {
             int potentialPowerUpsLeft = getPotentialPowerUps(blocksInLeft);
             // kasus hanya kiri kosong
             if(isNgekor()) {
-                if(hasPowerUp(PowerUps.LIZARD)) {
+                if (hasPowerUp(PowerUps.LIZARD) && cekLizard(blocksInFront,potentialDamageFront) !=0) { // tambahain syarat kalo jatuh ke block yang ada penghalangnya
                     return LIZARD;
+                }
+                if(hasPowerUp(PowerUps.LIZARD) && cekLizard(blocksInFront,potentialDamageFront) ==0){
+                    return new DecelerateCommand();
                 }
                 if(potentialDamageLeft == 0 && potentialDamageRight == 0) {
                     return turn_random();
@@ -96,9 +99,12 @@ public class Bot {
             }
             // kasus semua lane ada damage
             if (potentialDamageLeft > 0 && potentialDamageFront > 0 && potentialDamageRight > 0) {
-                if (hasPowerUp(PowerUps.LIZARD)) { // tambahain syarat kalo jatuh ke block yang ada penghalangnya
+                if (hasPowerUp(PowerUps.LIZARD) && cekLizard(blocksInFront,potentialDamageFront) !=0) { // tambahain syarat kalo jatuh ke block yang ada penghalangnya
                     return LIZARD;
-                } // gak punya lizard
+                }
+                if(hasPowerUp(PowerUps.LIZARD) && cekLizard(blocksInFront,potentialDamageFront) ==0){
+                    return new DecelerateCommand();
+                }// gak punya lizard
                 if (potentialDamageLeft < potentialDamageRight && potentialDamageLeft < potentialDamageFront) {
                     return TURN_LEFT;
                 }
@@ -147,8 +153,11 @@ public class Bot {
                 return TURN_LEFT;
             }
             if((potentialDamageLeft > 0 && potentialDamageFront > 0) || isNgekor()) {
-                if (hasPowerUp(PowerUps.LIZARD)) { // tambahain syarat kalo jatuh ke block yang ada penghalangnya
+                if (hasPowerUp(PowerUps.LIZARD) && cekLizard(blocksInFront,potentialDamageFront) !=0) { // tambahain syarat kalo jatuh ke block yang ada penghalangnya
                     return LIZARD;
+                }
+                if(hasPowerUp(PowerUps.LIZARD) && cekLizard(blocksInFront,potentialDamageFront) ==0){
+                    return new DecelerateCommand();
                 }
                 if(potentialDamageFront > potentialDamageLeft) {
                     return TURN_LEFT;
@@ -369,6 +378,15 @@ public class Bot {
             }
         }
         return countPowerUp;
+    }
+    private int cekLizard(List<Object> listTerrain,int damage) {
+        int i = listTerrain.size()-1;
+        if(listTerrain.get(i) == Terrain.MUD | listTerrain.get(i) == Terrain.OIL_SPILL) {
+            damage -= 1;
+        } else if(listTerrain.get(i) == Terrain.WALL || listTerrain.get(i).equals("Cybertruck")) {
+            damage -= 2;
+        }
+        return damage;
     }
 }
 
