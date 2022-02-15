@@ -334,9 +334,11 @@ public class Bot {
             if (laneList[i] == null || laneList[i].terrain == Terrain.FINISH) {
                 break;
             }
-
-            blocks.add(laneList[i].terrain);
-
+            if(laneList[i].isOccupiedByCyberTruck) {
+                blocks.add("Cybertruck");
+            } else {
+                blocks.add(laneList[i].terrain);
+            }
         }
         return blocks;
     }
@@ -352,7 +354,7 @@ public class Bot {
         for (int i = 0; i < listTerrain.size(); i++) {
             if(listTerrain.get(i) == Terrain.MUD | listTerrain.get(i) == Terrain.OIL_SPILL) {
                 damage += 1;
-            } else if(listTerrain.get(i) == Terrain.WALL) {
+            } else if(listTerrain.get(i) == Terrain.WALL || listTerrain.get(i).equals("Cybertruck")) {
                 damage += 2;
             }
         }
