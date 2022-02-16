@@ -202,6 +202,9 @@ public class Bot {
             }
         }
         // jalan lurus doang
+        if(myCar.speed == 0) {
+            return new AccelerateCommand();
+        }
         if(!isMaxSpeed() && myCar.speed > 0 && potentialDamageAtNextSpeed - potentialDamageFront > 0) {
             return new DoNothingCommand();
         }
