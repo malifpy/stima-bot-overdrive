@@ -132,8 +132,11 @@ public class Bot {
                 return TURN_RIGHT;
             }
             if((potentialDamageRight > 0 && potentialDamageFront > 0) || isNgekor()) {
-                if (hasPowerUp(PowerUps.LIZARD)) { // tambahain syarat kalo jatuh ke block yang ada penghalangnya
+                if (hasPowerUp(PowerUps.LIZARD) && cekLizard(blocksInFront,potentialDamageFront) !=0) { // tambahain syarat kalo jatuh ke block yang ada penghalangnya
                     return LIZARD;
+                }
+                if(hasPowerUp(PowerUps.LIZARD) && cekLizard(blocksInFront,potentialDamageFront) ==0){
+                    return new DecelerateCommand();
                 }
                 if(potentialDamageFront > potentialDamageRight) {
                     return TURN_RIGHT;
