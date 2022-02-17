@@ -42,6 +42,9 @@ public class Bot {
         if (myCar.damage > 1) {
             return FIX;
         }
+        if(myCar.speed == 0) {
+            return new AccelerateCommand();
+        }
         if(myCar.position.lane == 2 | myCar.position.lane == 3) {
             List<Object> blocksInRight = getBlocksIn("right", myCar.position.lane, myCar.position.block);
             List<Object> blocksInLeft = getBlocksIn("left", myCar.position.lane, myCar.position.block);
@@ -202,9 +205,6 @@ public class Bot {
             }
         }
         // jalan lurus doang
-        if(myCar.speed == 0) {
-            return new AccelerateCommand();
-        }
         if(!isMaxSpeed() && myCar.speed > 0 && potentialDamageAtNextSpeed - potentialDamageFront > 0) {
             return new DoNothingCommand();
         }
@@ -397,32 +397,21 @@ public class Bot {
 }
 
 /*
-
-
-0. kalau ada di lane 3 atau lane 4, periksa apakah di lane 4 ada cybertruck.
-    kalau ada harus dihindari (ini belum)
-
 1. cek jumlah damage obstacle tiap lane yang mungkin berdasarkan jenis obstacle. jangan
 periksa Block yang ditempati mobil karena sudah tidak berlaku lagi. Jadi mulai hitung block di depan mobil apabila lurus.
 Mud: 1
 Oil: 1
 Wall: 2
 Cybertruck: 2
-
 2. pilih lane yang paling dikit damagenya. Belok jika damage besar apabila lurus.
 { kenapa gak cari lane yang ada power upnya? karena apabila bisa ambil power up tapi
 kena damage, max speed akan berkurang yang membuat mobil tidak bisa menggunakan power up scr optimal }
-
 3. apabila ada dua lane yang damagenya sama dengan syarat lebih kecil dari lane yang satunya,
     maka pilih jalur yang punya banyak power up (diperksa dulu).
-
 4. apabila jumlah power up sama, ambil jalur lurus (karena speed tidak dikurangi)
 5. apabila jalan lurus ada block dan punya lizard, pakai aja.
-
 5. apabila tetap ambil jalan lurus, gunakan power up dengan ketentuan
 - gunain emp (posisi di belakang) -> membuat speed musuh jadi 3
-- gunain tweet 4 76 (posisi di belakang) -> ngasih cyberstruk (damage 2)
+- gunain tweet -> ngasih cyberstruk (damage 2)
 - gunain oil (posisi di depan) -> damage 1
-
-6.
  */
