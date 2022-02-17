@@ -54,7 +54,7 @@ public class Bot {
                 if (hasPowerUp(PowerUps.LIZARD) && cekLizard(blocksInFront,potentialDamageFront) !=0) { // tambahain syarat kalo jatuh ke block yang ada penghalangnya
                     return LIZARD;
                 }
-                if(hasPowerUp(PowerUps.LIZARD) && cekLizard(blocksInFront,potentialDamageFront) ==0){
+                if(hasPowerUp(PowerUps.LIZARD) && potentialDamageFront !=0 && cekLizard(blocksInFront,potentialDamageFront) ==0){
                     return new DecelerateCommand();
                 }
                 if(potentialDamageLeft == 0 && potentialDamageRight == 0) {
@@ -135,7 +135,7 @@ public class Bot {
                 if (hasPowerUp(PowerUps.LIZARD) && cekLizard(blocksInFront,potentialDamageFront) !=0) { // tambahain syarat kalo jatuh ke block yang ada penghalangnya
                     return LIZARD;
                 }
-                if(hasPowerUp(PowerUps.LIZARD) && cekLizard(blocksInFront,potentialDamageFront) ==0){
+                if(hasPowerUp(PowerUps.LIZARD) && potentialDamageFront !=0 && cekLizard(blocksInFront,potentialDamageFront) ==0){
                     return new DecelerateCommand();
                 }
                 if(potentialDamageFront > potentialDamageRight) {
@@ -159,7 +159,7 @@ public class Bot {
                 if (hasPowerUp(PowerUps.LIZARD) && cekLizard(blocksInFront,potentialDamageFront) !=0) { // tambahain syarat kalo jatuh ke block yang ada penghalangnya
                     return LIZARD;
                 }
-                if(hasPowerUp(PowerUps.LIZARD) && cekLizard(blocksInFront,potentialDamageFront) ==0){
+                if(hasPowerUp(PowerUps.LIZARD) && potentialDamageFront !=0 && cekLizard(blocksInFront,potentialDamageFront) ==0){
                     return new DecelerateCommand();
                 }
                 if(potentialDamageFront > potentialDamageLeft) {
