@@ -316,7 +316,7 @@ public class Bot {
      * @return
      */
     private Boolean isReachable() {
-        return myCar.position.block + 15 >= opponent.position.block && (myCar.position.lane == opponent.position.lane || myCar.position.lane == opponent.position.lane + 1 || myCar.position.lane == opponent.position.lane - 1);
+        return myCar.position.lane == opponent.position.lane || myCar.position.lane == opponent.position.lane + 1 || myCar.position.lane == opponent.position.lane - 1;
     }
 
     /**
