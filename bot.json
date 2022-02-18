@@ -1,8 +1,7 @@
 {
-	"author": "John Doe",
-	"email": "John.Doe@example.com",
+	"author": "Kelompok Pick Up",
 	"nickName": "pick_up",
-	"botLocation": "/target",
-	"botFileName": "java-starter-bot-jar-with-dependencies.jar",
+	"botLocation": "/bin",
+	"botFileName": "pick-up.jar",
 	"botLanguage": "java"
 }

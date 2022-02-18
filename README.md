@@ -21,13 +21,13 @@ Detail Algoritma Bot adalah berikut:
 
 ### Linux
 
-Build menggunakan [Maven](https://maven.apache.org/).
+Build memerlukan [Maven](https://maven.apache.org/).
 
 ```bash
-mvn package
+make build
 ```
 
-Bot ada di `target/`.
+Bot ada di `bin/pick_up.jar`.
 
 ## Run
 
