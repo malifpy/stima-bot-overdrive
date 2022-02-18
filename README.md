@@ -19,6 +19,8 @@ Detail Algoritma Bot adalah berikut:
 
 ## Build
 
+### Prerequsite
+- [IntelIiJ IDEA](https://www.jetbrains.com/idea/)
 ### Linux
 
 Build memerlukan [Maven](https://maven.apache.org/).
@@ -29,6 +31,11 @@ make build
 
 Bot ada di `bin/pick_up.jar`.
 
+### Windows
+
+Buka src bot dengan menggunakan IntelIiJ IDEA
+Pilih Maven Package -> Lifecycle -> package
+
 ## Run
 
 ### Prerequsite
@@ -36,12 +43,14 @@ Bot ada di `bin/pick_up.jar`.
  - [Game OverDrive](https://github.com/EntelectChallenge/2020-Overdrive/releases/tag/2020.3.4)
  - [Java](https://www.java.com/)
 
-### Linux
-
  - Pastikan Bot sudah di-build. Baca [Build](#build) untuk melihat cara build Bot.
  - Ubah `player-a` dan `player-b` di `game-runner-config` dengan path ke Bot.
+### Linux
+
  - Run game dengan perintah `make run`.
 
+### Windows
+ - Run game dengan mengeklik file `run.bat` yang berada pada Game Overdrive
 ## Anggota
 
 | Nama | NIM |
