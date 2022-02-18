@@ -33,8 +33,8 @@ Bot ada di `bin/pick_up.jar`.
 
 ### Windows
 
-Buka src bot dengan menggunakan IntelIiJ IDEA
-Pilih Maven Package -> Lifecycle -> package
+- Buka direktori bot dengan menggunakan IntelIiJ IDEA
+- Pilih Maven Package -> Lifecycle -> package
 
 ## Run
 
