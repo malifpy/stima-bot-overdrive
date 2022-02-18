@@ -2,6 +2,6 @@
 	"author": "Kelompok Pick Up",
 	"nickName": "pick_up",
 	"botLocation": "/bin",
-	"botFileName": "pick-up.jar",
+	"botFileName": "pick_up.jar",
 	"botLanguage": "java"
 }
